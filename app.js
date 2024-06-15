@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const router = express.Router({ mergeParams: true });
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
@@ -44,3 +43,5 @@ app.listen(3000, () => {
 app.listen(8080, () => {
   console.log("server is listening to port 8080");
 });
+
+
