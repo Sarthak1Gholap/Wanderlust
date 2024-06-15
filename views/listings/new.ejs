@@ -1,0 +1,64 @@
+<% layout('layouts/boilerplate') %>
+
+<body>
+  <div class="row">
+    <div class="col-8 offset-2">
+      <h3>Create a New Listing</h3>
+      <form id="listingForm" method="POST" action="/listings" novalidate>
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input name="listing[title]" placeholder="Enter title" type="text" class="form-control" required id="title">
+          <div class="invalid-feedback">Please provide a title.</div>
+          <div class="valid-feedback">Title looks good</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea name="listing[description]" placeholder="Enter description" class="form-control" required id="description"></textarea>
+          <div class="invalid-feedback">Please provide a description.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="image" class="form-label">Image URL/Link</label>
+          <input name="listing[image]" placeholder="Enter image URL/Link" type="text" class="form-control" id="image">
+        </div>
+
+        <div class="mb-3">
+          <label for="price" class="form-label">Price</label>
+          <input name="listing[price]" placeholder="Enter price" type="number" class="form-control" required id="price">
+          <div class="invalid-feedback">Please provide a valid price.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="country" class="form-label">Country</label>
+          <input name="listing[country]" placeholder="Enter country" type="text" class="form-control" required id="country">
+          <div class="invalid-feedback">Please provide a country.</div>
+        </div>
+
+        <div class="mb-3">
+          <label for="location" class="form-label">Location</label>
+          <input name="listing[location]" placeholder="Enter location" type="text" class="form-control" required id="location">
+          <div class="invalid-feedback">Please provide a location.</div>
+        </div>
+
+        <button class="btn btn-dark add-btn" type="submit">Add</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var form = document.getElementById('listingForm');
+        form.addEventListener('submit', function(event) {
+          if (form.checkValidity() === false) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        }, false);
+      }, false);
+    })();
+  </script>
+</body>
