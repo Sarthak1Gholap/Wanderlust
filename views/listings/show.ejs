@@ -1,49 +1,70 @@
-<% layout("/layouts/boilerplate.ejs") %>
+<% layout('layouts/boilerplate') %>
 
-<div class="row">
+<h1>SHOW EJS</h1>
+
+<!-- <div class="row">
     <div class="col-8 offset-2 title">
         <h3><%= listing.title %></h3>
     </div>
     <div class="card col-6 offset-3 listing-card">
         <img src="<%= listing.image %>" class="card-img-top show-img show-card" alt="listing_image">
         <div class="card-body">
+            <p>Owned by <i> <%= listing.owner.username %></i></p>
             <p><%= listing.description %></p>
             <p>&#8377;<%= listing.price.toLocaleString("en-IN") %></p>
             <p><%= listing.location %> <br>
             <%= listing.country %></p>
         </div>
-    </div>
-    <br>
+    </div> -->
+    <!-- <br>
+    <% if( currUser && currUser._id.equals(listing.owner._id)){ %>
     <div class="btns d-flex justify-content-center">
         <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn mx-2">Edit</a>
         <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST" class="mx-2">
             <button class="btn btn-dark" type="submit">Delete</button>   
         </form>
     </div>
+    <%}%>
     <div class="col-8 offset-2 mb-3">
         <hr/>
+        <% if(currUser) { %>
         <h4>Leave a Review</h4>
         <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
             <div class="mb-3 mt-3">
                 <label for="rating" class="form-label">Rating</label>
                 <input type="range" min="1" max="5" id="rating" name="review[rating]" class="form-range">
             </div>
+            <fieldset class="starability-slot">
+                <legend>First rating:</legend>
+                <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="0" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="rating" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="rating" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="rating" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="rating" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="rating" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+              </fieldset>
             <div class="mb-3 mt-3">
                 <label for="comment" class="form-label">Comments</label>
                 <textarea name="review[comment]" id="comment" cols="30" rows="5" class="form-control" required></textarea>
             </div>
             <button class="btn btn-outline-dark" type="submit">Submit</button>
         </form>
+        <% } %>
 
         <hr />
         <h4>All Reviews</h4>
         <div class="row">
-            <% for(let review of listing.reviews) { %>
+            <% for(review of listing.reviews) { %>
                 <div class="card col-5 mb-3 ms-3">
                     <div class="card-body">
-                        <h5 class="card-title">Reviewer Name</h5>
+                        <h5 class="card-title">@<%= review.author.username%></h5>
                         <p class="card-text"><%= review.comment %></p>
-                        <p class="card-text"><%= review.rating %> stars</p>
+                        <p class="starability-result card-text" data-rating = "<%= review.rating% %>"></p>
                         <form class="mb-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
                             <button class="btn btn-dark" type="submit">Delete</button>
                         </form>
@@ -52,4 +73,4 @@
             <% } %>
         </div>
     </div>
-</div>
+</div>  -->
