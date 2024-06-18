@@ -1,9 +1,7 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 const listingControllers = require("../controllers/listings");
 const { isLoggedIn, isOwner } = require("../middleware");
-
-
 
 router.get("/", listingControllers.index);
 
