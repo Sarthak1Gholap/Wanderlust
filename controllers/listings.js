@@ -5,49 +5,60 @@ const { isloggedin } = require("../middleware");
 const { isowner } = require("../middleware");
 
 module.exports.index = wrapAsync(async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
+  const allListings = await Listing.find({});
+  res.render("listings/index.ejs", { allListings });
 });
 
 module.exports.newForm = (req, res) => {
-    res.render("listings/new.ejs");
+  res.render("listings/new.ejs");
 };
 
 module.exports.show = wrapAsync(async (req, res) => {
-    console.log("REQ RECEIVED")
-    
-    res.render("listings/show.ejs");
+  console.log("REQ RECEIVED");
+  const { id } = req.params;
+  if (!id) throw new ExpressError(400, "Empty or invalid listing id");
+  const listing = await Listing.findById(id)
+    .populate({ path: "reviews", populate: { path: "author" } })
+    .populate("owner");
+
+  console.log(listing);
+  if (!listing) {
+    req.flash("error", "Listing not found");
+    res.redirect("/listings");
+    return;
+  }
+  res.render("listings/show.ejs", { listing });
 });
 
 module.exports.create = wrapAsync(async (req, res) => {
-    listingSchema.validate(req.body);
-    const newListing = new Listing(req.body.listing);
-    newListing.owner = req.user._id;
-    await newListing.save();
-    req.flash("success", "New listing created!");
-    res.redirect("/listings");
+  listingSchema.validate(req.body);
+  const newListing = new Listing(req.body.listing);
+  newListing.owner = req.user._id;
+  await newListing.save();
+  req.flash("success", "New listing created!");
+  res.redirect("/listings");
 });
 
 module.exports.editForm = wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    const listing = await Listing.findById(id);
-    if (!listing) {
-        req.flash("error", "Listing you are trying to access does not exist!");
-        return res.redirect("/listings");
-    }
-    res.render("listings/edit.ejs", { listing });
+  const { id } = req.params;
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    req.flash("error", "Listing you are trying to access does not exist!");
+    return res.redirect("/listings");
+  }
+  res.render("listings/edit.ejs", { listing });
 });
 
 module.exports.update = wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    req.flash("success", "Listing updated!");
-    res.redirect(`/listings/${id}`);
+  const { id } = req.params;
+  await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+  req.flash("success", "Listing updated!");
+  res.redirect(`/listings/${id}`);
 });
 
 module.exports.delete = wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    await Listing.findByIdAndDelete(id);
-    req.flash("success", "Listing deleted!");
-    res.redirect("/listings");
+  const { id } = req.params;
+  await Listing.findByIdAndDelete(id);
+  req.flash("success", "Listing deleted!");
+  res.redirect("/listings");
 });
