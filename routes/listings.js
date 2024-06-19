@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const listingControllers = require("../controllers/listings");
 const { isLoggedIn, isOwner } = require("../middleware");
+const multer  = require('multer');
+const{ storage } = require("../cloudconfig.js")
+const upload = multer({ storage });
 
 router.get("/", listingControllers.index);
 

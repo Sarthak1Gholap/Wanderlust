@@ -1,3 +1,7 @@
+require('dotenv').config();
+console.log(process.env);
+
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -10,6 +14,8 @@ const passport= require("passport");
 const LocalStrategy = require("passport-local");
 const User = require("./models/user.js");
 
+
+//  
 
 const register = async (user, password) => {
   // Implement the registration logic
