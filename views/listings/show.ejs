@@ -148,20 +148,22 @@
 </div>
 
 <script>
-  const accessToken = "<%= process.env.MAP_TOKEN %>";
-  mapboxgl.accessToken = accessToken;
+    const accessToken = "<%= process.env.MAP_TOKEN %>";
+    mapboxgl.accessToken = accessToken;
 
 
-  const coordinates = <%= JSON.stringify(listing?.geometry?.coordinates) %>;
+    const coordinates = <%= JSON.stringify(listing?.geometry?.coordinates) %>;
 
-  const map = new mapboxgl.Map({
-    container: "map",
-    style: "mapbox://styles/mapbox/streets-v11",
-    center: coordinates,
-    zoom: 9,
-  });
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v11",
+      center: coordinates,
+      zoom: 9,
+    });
 
-  const marker = new mapboxgl.Marker({color: "red"}).setLngLat(coordinates).addTo(map)
+  //WORKING NOW
+
+    const marker = new mapboxgl.Marker({color: "red"}).setLngLat(coordinates).addTo(map)
 </script>
 
 <!-- <script src="/js/map.js"></script> -->
