@@ -4,6 +4,10 @@ const wrapAsync = require("../utils/wrapAsync");
 const { isloggedin } = require("../middleware");
 const { isowner } = require("../middleware");
 
+const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding");
+const mapToken = process.env.MAP_TOKEN;
+const geoCodingCLient = mbxGeocoding({ accessToken: mapToken });
+
 module.exports.index = wrapAsync(async (req, res) => {
   const allListings = await Listing.find({});
   res.render("listings/index.ejs", { allListings });
@@ -14,7 +18,6 @@ module.exports.newForm = (req, res) => {
 };
 
 module.exports.show = wrapAsync(async (req, res) => {
-  console.log("REQ RECEIVED");
   const { id } = req.params;
   if (!id) throw new ExpressError(400, "Empty or invalid listing id");
   const listing = await Listing.findById(id)
@@ -31,14 +34,24 @@ module.exports.show = wrapAsync(async (req, res) => {
 });
 
 module.exports.create = wrapAsync(async (req, res) => {
-
   let url = req.file.path;
   let filename = req.file.filename;
- 
-  let newListing = new Listing(req.body.listing)
+
+  const coordinate = await geoCodingCLient
+    .forwardGeocode({
+      query: req.body.listing.location,
+      limit: 1,
+    })
+    .send();
+
+  let newListing = new Listing(req.body.listing);
+  newListing.geometry = coordinate.body.features[0].geometry;
   newListing.owner = req.user._id;
-  newListing.image = {url,filename}
-  await newListing.save();
+  newListing.image = { url, filename };
+  const newListingLOG = await newListing.save();
+
+  console.log("NEW LISTING CREATED::::::::::::", newListingLOG);
+
   req.flash("success", "New listing created!");
   res.redirect("/listings");
 });
@@ -56,19 +69,28 @@ module.exports.editForm = wrapAsync(async (req, res) => {
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 });
 
-
 module.exports.update = wrapAsync(async (req, res) => {
   let { id } = req.params;
-    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
 
-  if (typeof req.file !== "undefined") {
+  console.log(":::REQ BODY::::", req.body);
+
+  let listing = await Listing.findByIdAndUpdate(
+    id,
+    { ...req.body.listing },
+    { new: true }
+  );
+
+  console.log("UPDATED:::::::", listing);
+
+  if (req.file) {
     let url = req.file.path;
     let filename = req.file.filename;
     listing.image = { url, filename };
     await listing.save();
   }
-    req.flash("success", "Listing Updated!");
-    res.redirect(`/listings/${id}`);
+
+  req.flash("success", "Listing Updated!");
+  res.redirect(`/listings/${id}`);
 });
 
 module.exports.delete = wrapAsync(async (req, res) => {
@@ -78,8 +100,7 @@ module.exports.delete = wrapAsync(async (req, res) => {
   res.redirect("/listings");
 });
 
-
- //ta code
+//ta code
 
 //  const Listing = require("../models/listing");
 // const mbxGeocoding = require("@mapbox/mapbox-sdk/services/geocoding.js");
@@ -176,5 +197,3 @@ module.exports.delete = wrapAsync(async (req, res) => {
 // 	req.flash("success", "Listing Deleted!");
 // 	res.redirect("/listings");
 // };
-
-
