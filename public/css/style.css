@@ -78,3 +78,8 @@ nav-link {
 .title{
     text-align: center;
 }
+/* Map */
+#map {
+    height: 400px;
+    width: 80vh;
+}
