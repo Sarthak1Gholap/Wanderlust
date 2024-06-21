@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const listingControllers = require("../controllers/listings");
 const { isLoggedIn, isOwner, validateListing } = require("../middleware");
-const multer  = require('multer');
-const{ storage } = require("../cloudconfig.js");
+const multer = require("multer");
+const { storage } = require("../cloudconfig.js");
 const wrapAsync = require("../utils/wrapAsync.js");
-const upload = multer({ storage});
+const upload = multer({ storage });
 
 router.get("/", listingControllers.index);
 
@@ -13,7 +13,13 @@ router.get("/new", isLoggedIn, listingControllers.newForm);
 
 router.get("/:id", listingControllers.show);
 
-router.post("/", isLoggedIn, upload.single('listing[image]'),validateListing,listingControllers.create);
+router.post(
+  "/",
+  isLoggedIn,
+  upload.single("listing[image]"),
+  validateListing,
+  listingControllers.create
+);
 // isLoggedIn, upload.single('listing[image]')
 // router.post("/",isLoggedIn, upload.single('listing[image]'),validateListing,wrapAsync
 // ((req,res)=>{
@@ -26,12 +32,17 @@ router.post("/", isLoggedIn, upload.single('listing[image]'),validateListing,lis
 
 router.get("/:id/edit", isLoggedIn, isOwner, listingControllers.editForm);
 
-router.put("/:id", isLoggedIn, isOwner, listingControllers.update);
+router.put(
+  "/:id",
+  isLoggedIn,
+  isOwner,
+  upload.single("listing[image]"),
+  listingControllers.update
+);
 
 router.delete("/:id", isLoggedIn, isOwner, listingControllers.delete);
 
 module.exports = router;
-
 
 //ta edit
 
@@ -46,12 +57,10 @@ module.exports = router;
 // const { storage } = require("../cloudConfig.js");
 // const upload = multer({ storage });
 
-
 // //Index and Create Route
 // router.route("/")
 //     .get(wrapAsync(listingController.index))
 //     .post(isLoggedIn, upload.single('listing[image]'), validateListing, wrapAsync(listingController.createListing));
-
 
 // //New Route
 // router.get("/new", isLoggedIn, listingController.renderNewForm);
@@ -64,6 +73,5 @@ module.exports = router;
 
 // //Edit Route
 // router.get("/:id/edit", isLoggedIn, isOwner, wrapAsync(listingController.renderEditForm));
-
 
 // module.exports = router;
